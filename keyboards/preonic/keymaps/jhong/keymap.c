@@ -1,6 +1,9 @@
 #include QMK_KEYBOARD_H
 #include "muse.h"
 
+/* Tap Dance Aliases */
+#define TD_LGUIALT TD(TD_LGUI_ALT_HOLD)
+
 enum preonic_layers {
   _QWERTY,
   _NAV,
@@ -16,6 +19,30 @@ enum preonic_keycodes {
   RAISE,
   BACKLIT
 };
+
+enum tapdance_keycodes {
+  TD_LGUI_ALT_HOLD
+};
+
+typedef enum {
+  TD_NONE,
+  TD_UNKNOWN,
+  TD_SINGLE_TAP,
+  TD_SINGLE_HOLD,
+  TD_DOUBLE_TAP,
+  TD_DOUBLE_HOLD,
+  TD_TRIPLE_TAP,
+  TD_TRIPLE_HOLD
+} td_state_t;
+
+typedef struct {
+  td_state_t lgui;
+} td_tap_t;
+
+td_state_t current_dance(qk_tap_dance_state_t *state);
+
+void td_lgui(qk_tap_dance_state_t *state, void *user_data);
+void td_lgui(qk_tap_dance_state_t *state, void *user_data);
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -39,11 +66,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * Up: Hold - Right Ctrl, Tap - Up
  */
 [_QWERTY] = LAYOUT_preonic_grid(
-  KC_GRV,         KC_1,    KC_2,    KC_3,    KC_4,    KC_5,             KC_6,              KC_7,   KC_8,            KC_9,            KC_0,          KC_BSLS,
-  KC_TAB,         KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,             KC_Y,              KC_U,   KC_I,            KC_O,            KC_P,          KC_BSPC,
-  LCTL_T(KC_ESC), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,             KC_H,              KC_J,   KC_K,            KC_L,            KC_SCLN,       KC_QUOT,
-  KC_LSFT,        KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,             KC_N,              KC_M,   KC_COMM,         KC_DOT,          KC_SLSH,       RSFT_T(KC_ENT),
-  BACKLIT,        KC_RCTL, KC_LALT, KC_LGUI, LOWER,   LT(_NAV, KC_SPC), LT(_NAV, KC_SPC),  RAISE,  LALT_T(KC_LEFT), RGUI_T(KC_DOWN), RCTL_T(KC_UP), KC_RGHT
+  KC_GRV,         KC_1,    KC_2,    KC_3,       KC_4,    KC_5,             KC_6,              KC_7,   KC_8,            KC_9,            KC_0,          KC_BSLS,
+  KC_TAB,         KC_Q,    KC_W,    KC_E,       KC_R,    KC_T,             KC_Y,              KC_U,   KC_I,            KC_O,            KC_P,          KC_BSPC,
+  LCTL_T(KC_ESC), KC_A,    KC_S,    KC_D,       KC_F,    KC_G,             KC_H,              KC_J,   KC_K,            KC_L,            KC_SCLN,       KC_QUOT,
+  KC_LSFT,        KC_Z,    KC_X,    KC_C,       KC_V,    KC_B,             KC_N,              KC_M,   KC_COMM,         KC_DOT,          KC_SLSH,       RSFT_T(KC_ENT),
+  BACKLIT,        KC_RCTL, KC_LALT, TD_LGUIALT, LOWER,   LT(_NAV, KC_SPC), LT(_NAV, KC_SPC),  RAISE,  LALT_T(KC_LEFT), RGUI_T(KC_DOWN), RCTL_T(KC_UP), KC_RGHT
 ),
 
 /* Nav
@@ -263,3 +290,70 @@ bool music_mask_user(uint16_t keycode) {
       return true;
   }
 }
+
+td_state_t current_dance(qk_tap_dance_state_t *state) {
+  if (state->count == 1) {
+    if (state->interrupted || !state->pressed)
+      return TD_SINGLE_TAP;
+    // Key has not been interrupted, but the key is still held. Means you want to send a 'HOLD'.
+    else
+      return TD_SINGLE_HOLD;
+  }
+  else if (state->count == 2) {
+    if (state->interrupted || !state->pressed)
+      return TD_DOUBLE_TAP;
+    else
+      return TD_DOUBLE_HOLD;
+  }
+  else if (state->count == 3) {
+    if (state->interrupted || !state->pressed)
+      return TD_TRIPLE_TAP;
+    else
+      return TD_TRIPLE_HOLD;
+  }
+  else
+    return TD_UNKNOWN;
+}
+
+// Global Tap Dance State
+static td_tap_t tap_states = {
+  .lgui = TD_NONE
+};
+
+void lgui_finished(qk_tap_dance_state_t *state, void *user_data) {
+  tap_states.lgui = current_dance(state);
+  switch (tap_states.lgui) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD:
+      register_code(KC_LGUI);
+      break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD:
+      unregister_code(KC_LGUI);
+      register_code(KC_LALT);
+      break;
+    default:
+      break;
+  }
+}
+
+void lgui_reset(qk_tap_dance_state_t *state, void *user_data) {
+  switch (tap_states.lgui) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD:
+      unregister_code(KC_LGUI);
+      break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD:
+      unregister_code(KC_LALT);
+      break;
+    default:
+      break;
+  }
+  tap_states.lgui = TD_NONE;
+}
+
+// Tap Dance defintions
+qk_tap_dance_action_t tap_dance_actions[] = {
+    [TD_LGUI_ALT_HOLD] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lgui_finished, lgui_reset)
+};
