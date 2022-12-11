@@ -3,10 +3,12 @@
 
 /* Tap Dance Aliases */
 #define TD_LGUIALT TD(TD_LGUI_ALT_HOLD)
+#define TD_LOWMO TD(TD_LOWER_MOUSE)
 
 enum preonic_layers {
   _QWERTY,
   _NAV,
+  _MOUSE,
   _LOWER,
   _RAISE,
   _ADJUST
@@ -15,13 +17,15 @@ enum preonic_layers {
 enum preonic_keycodes {
   QWERTY = SAFE_RANGE,
   NAV,
+  MOUSE,
   LOWER,
   RAISE,
   BACKLIT
 };
 
 enum tapdance_keycodes {
-  TD_LGUI_ALT_HOLD
+  TD_LGUI_ALT_HOLD,
+  TD_LOWER_MOUSE
 };
 
 typedef enum {
@@ -37,12 +41,16 @@ typedef enum {
 
 typedef struct {
   td_state_t lgui;
+  td_state_t lower;
 } td_tap_t;
 
 td_state_t current_dance(qk_tap_dance_state_t *state);
 
 void td_lgui(qk_tap_dance_state_t *state, void *user_data);
 void td_lgui(qk_tap_dance_state_t *state, void *user_data);
+
+void td_lower(qk_tap_dance_state_t *state, void *user_data);
+void td_lower(qk_tap_dance_state_t *state, void *user_data);
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -66,11 +74,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * Up: Hold - Right Ctrl, Tap - Up
  */
 [_QWERTY] = LAYOUT_preonic_grid(
-  KC_GRV,         KC_1,    KC_2,    KC_3,       KC_4,    KC_5,             KC_6,              KC_7,   KC_8,            KC_9,            KC_0,          KC_BSLS,
-  KC_TAB,         KC_Q,    KC_W,    KC_E,       KC_R,    KC_T,             KC_Y,              KC_U,   KC_I,            KC_O,            KC_P,          KC_BSPC,
-  LCTL_T(KC_ESC), KC_A,    KC_S,    KC_D,       KC_F,    KC_G,             KC_H,              KC_J,   KC_K,            KC_L,            KC_SCLN,       KC_QUOT,
-  KC_LSFT,        KC_Z,    KC_X,    KC_C,       KC_V,    KC_B,             KC_N,              KC_M,   KC_COMM,         KC_DOT,          KC_SLSH,       RSFT_T(KC_ENT),
-  BACKLIT,        KC_RCTL, KC_LALT, TD_LGUIALT, LOWER,   LT(_NAV, KC_SPC), LT(_NAV, KC_SPC),  RAISE,  LALT_T(KC_LEFT), RGUI_T(KC_DOWN), RCTL_T(KC_UP), KC_RGHT
+  KC_GRV,         KC_1,    KC_2,    KC_3,       KC_4,     KC_5,             KC_6,              KC_7,                KC_8,            KC_9,            KC_0,          KC_BSLS,
+  KC_TAB,         KC_Q,    KC_W,    KC_E,       KC_R,     KC_T,             KC_Y,              KC_U,                KC_I,            KC_O,            KC_P,          KC_BSPC,
+  LCTL_T(KC_ESC), KC_A,    KC_S,    KC_D,       KC_F,     KC_G,             KC_H,              KC_J,                KC_K,            KC_L,            KC_SCLN,       KC_QUOT,
+  KC_LSFT,        KC_Z,    KC_X,    KC_C,       KC_V,     KC_B,             KC_N,              KC_M,                KC_COMM,         KC_DOT,          KC_SLSH,       KC_RSFT,
+  BACKLIT,        KC_RCTL, KC_LALT, TD_LGUIALT, TD_LOWMO, LT(_NAV, KC_SPC), LT(_NAV, KC_SPC),  LT(_RAISE, KC_ENT),  LALT_T(KC_LEFT), RGUI_T(KC_DOWN), RCTL_T(KC_UP), KC_RGHT
 ),
 
 /* Nav
@@ -92,6 +100,27 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______, _______, KC_END,  KC_PGUP, KC_PGDN, KC_HOME, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, _______,
   _______, _______, _______, _______, _______, _______, _______, KC_MUTE, _______, _______, _______, _______,
   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+),
+
+/* Mouse
+ * ,-----------------------------------------------------------------------------------.
+ * |      |      |      |      |      |      |      |      |      |      |      |      |
+ * |------+------+------+------+------+-------------+------+------+------+------+------|
+ * |      |      |      |      |      |      |      |      |      |      |      |      |
+ * |------+------+------+------+------+-------------+------+------+------+------+------|
+ * |      |      | ACL0 | ACL1 | ACL2 |      | MS_L | MS_D | MS_U | MS_R |      |      |
+ * |------+------+------+------+------+------|------+------+------+------+------+------|
+ * |      |      |      |      |      |      |      |M_CLK |      |      |      |      |
+ * |------+------+------+------+------+------+------+------+------+------+------+------|
+ * |      |      |      |      |      |    L_CLK    |R_CLK |      |      |      |      |
+ * `-----------------------------------------------------------------------------------'
+ */
+[_MOUSE] = LAYOUT_preonic_grid(
+  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+  _______, _______, KC_ACL0, KC_ACL1, KC_ACL2, _______, KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, _______, _______,
+  _______, _______, _______, _______, _______, _______, _______, KC_BTN3, _______, _______, _______, _______,
+  _______, _______, _______, _______, _______, KC_BTN1, KC_BTN1, KC_BTN2, _______, _______, _______, _______
 ),
 
 /* Lower
@@ -316,7 +345,8 @@ td_state_t current_dance(qk_tap_dance_state_t *state) {
 
 // Global Tap Dance State
 static td_tap_t tap_states = {
-  .lgui = TD_NONE
+  .lgui = TD_NONE,
+  .lower = TD_NONE
 };
 
 void lgui_finished(qk_tap_dance_state_t *state, void *user_data) {
@@ -352,7 +382,43 @@ void lgui_reset(qk_tap_dance_state_t *state, void *user_data) {
   tap_states.lgui = TD_NONE;
 }
 
+void lower_finished(qk_tap_dance_state_t *state, void *user_data) {
+  tap_states.lower = current_dance(state);
+  switch (tap_states.lower) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD:
+      layer_on(_LOWER);
+      break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD:
+      if (layer_state_is(_LOWER)) {
+        layer_off(_LOWER);
+      }
+      layer_on(_MOUSE);
+      break;
+    default:
+      break;
+  }
+}
+
+void lower_reset(qk_tap_dance_state_t *state, void *user_data) {
+  switch (tap_states.lower) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD:
+      layer_off(_LOWER);
+      break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD:
+      layer_off(_MOUSE);
+      break;
+    default:
+      break;
+  }
+  tap_states.lower = TD_NONE;
+}
+
 // Tap Dance defintions
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_LGUI_ALT_HOLD] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lgui_finished, lgui_reset)
+    [TD_LGUI_ALT_HOLD] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lgui_finished, lgui_reset),
+    [TD_LOWER_MOUSE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lower_finished, lower_reset)
 };

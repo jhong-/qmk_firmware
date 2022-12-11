@@ -34,3 +34,8 @@
 //#define MIDI_TONE_KEYCODE_OCTAVES 2
 
 #define TAPPING_TERM 200
+
+/* #define MK_3_SPEED */
+#define MK_MOMENTARY_ACCEL
+#define MOUSEKEY_MAX_SPEED         8
+
