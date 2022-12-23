@@ -445,43 +445,7 @@ void lgui_reset(qk_tap_dance_state_t *state, void *user_data) {
   tap_states.lgui = TD_NONE;
 }
 
-void lower_finished(qk_tap_dance_state_t *state, void *user_data) {
-  tap_states.lower = current_dance(state);
-  switch (tap_states.lower) {
-    case TD_SINGLE_TAP:
-    case TD_SINGLE_HOLD:
-      layer_on(_LOWER);
-      break;
-    case TD_DOUBLE_TAP:
-    case TD_DOUBLE_HOLD:
-      if (layer_state_is(_LOWER)) {
-        layer_off(_LOWER);
-      }
-      layer_on(_MOUSE);
-      break;
-    default:
-      break;
-  }
-}
-
-void lower_reset(qk_tap_dance_state_t *state, void *user_data) {
-  switch (tap_states.lower) {
-    case TD_SINGLE_TAP:
-    case TD_SINGLE_HOLD:
-      layer_off(_LOWER);
-      break;
-    case TD_DOUBLE_TAP:
-    case TD_DOUBLE_HOLD:
-      layer_off(_MOUSE);
-      break;
-    default:
-      break;
-  }
-  tap_states.lower = TD_NONE;
-}
-
 // Tap Dance defintions
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_LGUI_ALT_HOLD] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lgui_finished, lgui_reset),
-    [TD_LOWER_MOUSE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lower_finished, lower_reset)
+    [TD_LGUI_ALT_HOLD] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lgui_finished, lgui_reset)
 };
