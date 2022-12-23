@@ -65,13 +65,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Qwerty
  * ,-----------------------------------------------------------------------------------.
- * |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  |  \   |
+ * |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Del  |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * | Tab  |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  | Bksp |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * | Esc  |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |  "   |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
- * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
+ * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Shift |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * | Brite| Ctrl | Alt  | GUI  |Lower |    Space    |Raise | Left | Down |  Up  |Right |
  * `-----------------------------------------------------------------------------------'
@@ -83,7 +83,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * Up: Hold - Right Ctrl, Tap - Up
  */
 [_QWERTY] = LAYOUT_preonic_grid(
-  KC_GRV,      KC_1,    KC_2,    KC_3,       KC_4,          KC_5,       KC_6,       KC_7,          KC_8,         KC_9,        KC_0,       KC_BSLS,
+  KC_GRV,      KC_1,    KC_2,    KC_3,       KC_4,          KC_5,       KC_6,       KC_7,          KC_8,         KC_9,        KC_0,       KC_DEL,
   KC_TAB,      KC_Q,    KC_W,    KC_E,       KC_R,          KC_T,       KC_Y,       KC_U,          KC_I,         KC_O,        KC_P,       KC_BSPC,
   MT_LCTL_ESC, KC_A,    KC_S,    KC_D,       KC_F,          KC_G,       KC_H,       KC_J,          KC_K,         KC_L,        KC_SCLN,    KC_QUOT,
   KC_LSFT,     KC_Z,    KC_X,    KC_C,       KC_V,          KC_B,       KC_N,       KC_M,          KC_COMM,      KC_DOT,      KC_SLSH,    KC_RSFT,
@@ -178,20 +178,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------------------------------------------------.
  * |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      | Reset| Debug|      |      |      |      |      |      |      |      |  Del |
+ * | ACL0 | Reset| Debug|      |      |      |Aud cy|Aud on|AudOff|AGnorm|AGswap|  Del |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * |      |      |Aud cy|Aud on|AudOff|AGnorm|AGswap|Qwerty|      |      |      |      |
+ * | ACL1 |      |M_CLK |R_CLK |L_CLK |      | MS_L | MS_D | MS_U | MS_R |      |      |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
- * |      |Voice-|Voice+|Mus on|MusOff|MidiOn|MidOff|      |      |      |      |      |
+ * | ACL2 |Voice-|Voice+|Mus on|MusOff|MidiOn|MidOff|      |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |      |      |      |      |             |      |      |      |      |      |
  * `-----------------------------------------------------------------------------------'
  */
 [_ADJUST] = LAYOUT_preonic_grid(
   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
-  _______, QK_BOOT, DB_TOGG, _______, _______, _______, _______, _______, _______, _______, _______, KC_DEL,
-  _______, _______, MU_NEXT, AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, QWERTY,  _______, _______, _______, _______,
-  _______, AU_PREV, AU_NEXT, MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  _______, _______, _______, _______, _______,
+  KC_ACL0, QK_BOOT, DB_TOGG, _______, _______, _______, MU_NEXT, AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, KC_DEL,
+  KC_ACL1, _______, KC_BTN2, KC_BTN2, KC_BTN1, _______, KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, _______, _______,
+  KC_ACL2, AU_PREV, AU_NEXT, MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  _______, _______, _______, _______, _______,
   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 )
 
