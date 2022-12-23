@@ -1,9 +1,18 @@
 #include QMK_KEYBOARD_H
 #include "muse.h"
 
-/* Tap Dance Aliases */
-#define TD_LGUIALT TD(TD_LGUI_ALT_HOLD)
-#define TD_LOWMO TD(TD_LOWER_MOUSE)
+// Mod-Taps
+#define MT_LCTL_ESC    LCTL_T(KC_ESC)
+#define MT_LOWER_BSPC  LT(_LOWER, KC_BSPC)
+#define MT_NAV_SPC     LT(_NAV, KC_SPC)
+#define MT_RAISE_ENT   LT(_RAISE, KC_ENT)
+#define MT_LALT_LEFT   LALT_T(KC_LEFT)
+#define MT_GUI_DOWN    RGUI_T(KC_DOWN)
+#define MT_RCTL_UP     RCTL_T(KC_UP)
+
+// Tap Dance Aliases
+#define TD_LGUIALT     TD(TD_LGUI_ALT_HOLD)
+#define TD_LOWMO       TD(TD_LOWER_MOUSE)
 
 enum preonic_layers {
   _QWERTY,
@@ -74,11 +83,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * Up: Hold - Right Ctrl, Tap - Up
  */
 [_QWERTY] = LAYOUT_preonic_grid(
-  KC_GRV,         KC_1,    KC_2,    KC_3,       KC_4,     KC_5,             KC_6,              KC_7,                KC_8,            KC_9,            KC_0,          KC_BSLS,
-  KC_TAB,         KC_Q,    KC_W,    KC_E,       KC_R,     KC_T,             KC_Y,              KC_U,                KC_I,            KC_O,            KC_P,          KC_BSPC,
-  LCTL_T(KC_ESC), KC_A,    KC_S,    KC_D,       KC_F,     KC_G,             KC_H,              KC_J,                KC_K,            KC_L,            KC_SCLN,       KC_QUOT,
-  KC_LSFT,        KC_Z,    KC_X,    KC_C,       KC_V,     KC_B,             KC_N,              KC_M,                KC_COMM,         KC_DOT,          KC_SLSH,       KC_RSFT,
-  BACKLIT,        KC_RCTL, KC_LALT, TD_LGUIALT, TD_LOWMO, LT(_NAV, KC_SPC), LT(_NAV, KC_SPC),  LT(_RAISE, KC_ENT),  LALT_T(KC_LEFT), RGUI_T(KC_DOWN), RCTL_T(KC_UP), KC_RGHT
+  KC_GRV,      KC_1,    KC_2,    KC_3,       KC_4,          KC_5,       KC_6,       KC_7,          KC_8,         KC_9,        KC_0,       KC_BSLS,
+  KC_TAB,      KC_Q,    KC_W,    KC_E,       KC_R,          KC_T,       KC_Y,       KC_U,          KC_I,         KC_O,        KC_P,       KC_BSPC,
+  MT_LCTL_ESC, KC_A,    KC_S,    KC_D,       KC_F,          KC_G,       KC_H,       KC_J,          KC_K,         KC_L,        KC_SCLN,    KC_QUOT,
+  KC_LSFT,     KC_Z,    KC_X,    KC_C,       KC_V,          KC_B,       KC_N,       KC_M,          KC_COMM,      KC_DOT,      KC_SLSH,    KC_RSFT,
+  BACKLIT,     KC_RCTL, KC_LALT, TD_LGUIALT, MT_LOWER_BSPC, MT_NAV_SPC, MT_NAV_SPC, MT_RAISE_ENT,  MT_LALT_LEFT, MT_GUI_DOWN, MT_RCTL_UP, KC_RGHT
 ),
 
 /* Nav
@@ -186,10 +195,49 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 )
 
-
 };
 
+// Initialize variable holding the binary
+// representation of active modifiers.
+uint8_t mod_state;
+
+bool handle_shift_backspace_to_delete(keyrecord_t *record)
+{
+  // Initialize a boolean variable that keeps track
+  // of the delete key status: registered or not?
+  static bool delkey_registered;
+
+  if (record->event.pressed) {
+    // Detect the activation of either shift keys
+    if (mod_state & MOD_MASK_SHIFT) {
+      // First temporarily canceling both shifts so that
+      // shift isn't applied to the KC_DEL keycode
+      del_mods(MOD_MASK_SHIFT);
+      register_code(KC_DEL);
+      // Update the boolean variable to reflect the status of KC_DEL
+      delkey_registered = true;
+      // Reapplying modifier state so that the held shift key(s)
+      // still work even after having tapped the Backspace/Delete key.
+      set_mods(mod_state);
+      return false;
+    }
+  }
+  // On release of KC_BSPC
+  else {
+    // In case KC_DEL is still being sent even after the release of KC_BSPC
+    if (delkey_registered) {
+      unregister_code(KC_DEL);
+      delkey_registered = false;
+      return false;
+    }
+  }
+  // Let QMK process the KC_BSPC keycode as usual outside of shift
+  return true;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  mod_state = get_mods();
+
   switch (keycode) {
         case QWERTY:
           if (record->event.pressed) {
@@ -197,6 +245,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           }
           return false;
           break;
+        case MT_LOWER_BSPC:
+          if (record->tap.count)
+          {
+            return handle_shift_backspace_to_delete(record);
+          }
+          // Fall-through: Holding for _LOWER
         case LOWER:
           if (record->event.pressed) {
             layer_on(_LOWER);
@@ -207,6 +261,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           }
           return false;
           break;
+        case MT_RAISE_ENT:
+          // Tapping for KC_ENT
+          if (record->tap.count)
+          {
+            return true;
+          }
+          // Fall-through: Holding for _RAISE
         case RAISE:
           if (record->event.pressed) {
             layer_on(_RAISE);
@@ -234,6 +295,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           }
           return false;
           break;
+        case KC_BSPC:
+          return handle_shift_backspace_to_delete(record);
       }
     return true;
 };
