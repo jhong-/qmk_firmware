@@ -11,7 +11,6 @@
 enum iris_layers {
   _QWERTY,
   _NAV,
-  _MOUSE,
   _LOWER,
   _RAISE,
   _ADJUST
@@ -45,14 +44,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                     _______, _______, _______,                        _______, _______, _______
   ),
 
-  [_MOUSE] = LAYOUT(
-     _______, _______, _______, _______, _______, _______,                                _______, _______, _______, _______, _______, _______,
-     _______, _______, _______, _______, _______, _______,                                _______, _______, _______, _______, _______, _______,
-     _______, _______, KC_ACL0, KC_ACL1, KC_ACL2, _______,                                KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, _______, _______,
-     _______, _______, _______, _______, _______, _______, _______,              _______, _______, _______, _______, _______, _______, _______,
-                                    _______, _______, _______,                        KC_BTN1, KC_BTN2, KC_BTN3
-  ),
-
   [_LOWER] = LAYOUT(
      KC_TILD, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                                KC_CIRC, KC_AMPR,   KC_ASTR,   KC_LPRN, KC_RPRN, KC_BSPC,
      KC_TILD, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                                KC_CIRC, KC_AMPR,   KC_ASTR,   KC_LPRN, KC_RPRN, KC_DEL,
@@ -83,9 +74,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_ADJUST] = LAYOUT(
      KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,                                  KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
-     _______, QK_BOOT, DB_TOGG, _______, _______, _______,                                _______, _______, _______, _______, _______, KC_DEL,
-     _______, _______, MU_NEXT, AU_ON,   AU_OFF,  AG_NORM,                                AG_SWAP, _______, _______, _______, _______, _______,
-     _______, AU_PREV, AU_NEXT, MU_ON,   MU_OFF,  MI_ON, _______,                _______, MI_OFF,  _______, _______, _______, _______, _______,
+     KC_ACL0, QK_BOOT, DB_TOGG, _______, _______, _______,                                MU_NEXT, AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, KC_DEL,
+     KC_ACL1, _______, KC_BTN2, KC_BTN2, KC_BTN1, _______,                                KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, _______, _______,
+     KC_ACL2, AU_PREV, AU_NEXT, MU_ON,   MU_OFF,  MI_ON, _______,                _______, MI_OFF,  _______, _______, _______, _______, _______,
                                     _______, _______, _______,                        _______, _______, _______
   )
 };
