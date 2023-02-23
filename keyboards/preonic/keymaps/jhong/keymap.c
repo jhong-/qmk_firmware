@@ -153,9 +153,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------------------------------------------------.
  * |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | ACL0 | Reset| Debug|      |      |      |Aud cy|Aud on|AudOff|AGnorm|AGswap|      |
+ * | ACL0 | Reset| Debug|      |      |RGB_T |Aud cy|Aud on|AudOff|AGnorm|AGswap|      |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | ACL1 |      |M_CLK |R_CLK |L_CLK |      | MS_L | MS_D | MS_U | MS_R |      |      |
+ * | ACL1 |      |M_CLK |R_CLK |L_CLK |RGB_M | MS_L | MS_D | MS_U | MS_R |      |      |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
  * | ACL2 |Voice-|Voice+|Mus on|MusOff|MidiOn|MidOff|      |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -164,8 +164,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_ADJUST] = LAYOUT_preonic_grid(
   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
-  KC_ACL0, QK_BOOT, DB_TOGG, _______, _______, _______, MU_NEXT, AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, _______,
-  KC_ACL1, _______, KC_BTN2, KC_BTN2, KC_BTN1, _______, KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, _______, _______,
+  KC_ACL0, QK_BOOT, DB_TOGG, _______, _______, RGB_TOG, MU_NEXT, AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, _______,
+  KC_ACL1, _______, KC_BTN2, KC_BTN2, KC_BTN1, RGB_MOD, KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, _______, _______,
   KC_ACL2, AU_PREV, AU_NEXT, MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  _______, _______, _______, _______, _______,
   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 )
